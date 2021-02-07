@@ -8,12 +8,14 @@
         <meta name="apple-mobile-web-app-capable" content="yes">
         <link rel="stylesheet" href="css/leaflet.css"><link rel="stylesheet" href="css/L.Control.Locate.min.css">
         <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/MarkerCluster.css">
+        <link rel="stylesheet" href="css/MarkerCluster.Default.css">
+        <link rel="stylesheet" href="css/leaflet-search.css">
         <link rel="stylesheet" href="css/leaflet-control-geocoder.Geocoder.css">
-        <link rel="stylesheet" href="css/leaflet-measure.css">
         <style>
         #map {
-            width: 1139px;
-            height: 809px;
+            width: 1499px;
+            height: 788px;
         }
         </style>
         <title></title>
@@ -31,35 +33,34 @@
         <script src="js/labelgun.min.js"></script>
         <script src="js/labels.js"></script>
         <script src="js/leaflet-control-geocoder.Geocoder.js"></script>
-        <script src="js/leaflet-measure.js"></script>
-        <script src="data/AAA_Region_Boundaries_1.js"></script>
-        <script src="data/ASCARA_Schools_AllOz_20210204_2.js"></script>
-        <script src="data/ASCARA_Schools_AllOz_20210204_3.js"></script>
+        <script src="js/leaflet.markercluster.js"></script>
+        <script src="js/leaflet-search.js"></script>
+        <script src="data/AAARegions_1.js"></script>
+        <script src="data/SchoolswithAgricultureASCARA20210204_2.js"></script>
         <script>
         var highlightLayer;
         function highlightFeature(e) {
             highlightLayer = e.target;
+
+            if (e.target.feature.geometry.type === 'LineString') {
+              highlightLayer.setStyle({
+                color: '#ffff00',
+              });
+            } else {
+              highlightLayer.setStyle({
+                fillColor: '#ffff00',
+                fillOpacity: 1
+              });
+            }
             highlightLayer.openPopup();
         }
         var map = L.map('map', {
             zoomControl:true, maxZoom:28, minZoom:1
-        }).fitBounds([[-54.621971437994716,93.86800336411613],[-1.605584762532942,168.56395336411617]]);
+        }).fitBounds([[-38.698149563074246,136.7275950307659],[-28.893370555058063,155.4015825307662]]);
         var hash = new L.Hash(map);
         map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
         L.control.locate({locateOptions: {maxZoom: 19}}).addTo(map);
-        var measureControl = new L.Control.Measure({
-            position: 'topleft',
-            primaryLengthUnit: 'meters',
-            secondaryLengthUnit: 'kilometers',
-            primaryAreaUnit: 'sqmeters',
-            secondaryAreaUnit: 'hectares'
-        });
-        measureControl.addTo(map);
-        document.getElementsByClassName('leaflet-control-measure-toggle')[0]
-        .innerHTML = '';
-        document.getElementsByClassName('leaflet-control-measure-toggle')[0]
-        .className += ' fas fa-ruler';
         var bounds_group = new L.featureGroup([]);
         function setBounds() {
         }
@@ -76,9 +77,12 @@
         });
         layer_OSMStandard_0;
         map.addLayer(layer_OSMStandard_0);
-        function pop_AAA_Region_Boundaries_1(feature, layer) {
+        function pop_AAARegions_1(feature, layer) {
             layer.on({
                 mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
                     if (typeof layer.closePopup == 'function') {
                         layer.closePopup();
                     } else {
@@ -102,9 +106,9 @@
             layer.bindPopup(popupContent, {maxHeight: 400});
         }
 
-        function style_AAA_Region_Boundaries_1_0() {
+        function style_AAARegions_1_0() {
             return {
-                pane: 'pane_AAA_Region_Boundaries_1',
+                pane: 'pane_AAARegions_1',
                 opacity: 1,
                 color: 'rgba(234,176,15,1.0)',
                 dashArray: '',
@@ -115,23 +119,26 @@
                 interactive: true,
             }
         }
-        map.createPane('pane_AAA_Region_Boundaries_1');
-        map.getPane('pane_AAA_Region_Boundaries_1').style.zIndex = 401;
-        map.getPane('pane_AAA_Region_Boundaries_1').style['mix-blend-mode'] = 'normal';
-        var layer_AAA_Region_Boundaries_1 = new L.geoJson(json_AAA_Region_Boundaries_1, {
+        map.createPane('pane_AAARegions_1');
+        map.getPane('pane_AAARegions_1').style.zIndex = 401;
+        map.getPane('pane_AAARegions_1').style['mix-blend-mode'] = 'normal';
+        var layer_AAARegions_1 = new L.geoJson(json_AAARegions_1, {
             attribution: '',
             interactive: true,
-            dataVar: 'json_AAA_Region_Boundaries_1',
-            layerName: 'layer_AAA_Region_Boundaries_1',
-            pane: 'pane_AAA_Region_Boundaries_1',
-            onEachFeature: pop_AAA_Region_Boundaries_1,
-            style: style_AAA_Region_Boundaries_1_0,
+            dataVar: 'json_AAARegions_1',
+            layerName: 'layer_AAARegions_1',
+            pane: 'pane_AAARegions_1',
+            onEachFeature: pop_AAARegions_1,
+            style: style_AAARegions_1_0,
         });
-        bounds_group.addLayer(layer_AAA_Region_Boundaries_1);
-        map.addLayer(layer_AAA_Region_Boundaries_1);
-        function pop_ASCARA_Schools_AllOz_20210204_2(feature, layer) {
+        bounds_group.addLayer(layer_AAARegions_1);
+        map.addLayer(layer_AAARegions_1);
+        function pop_SchoolswithAgricultureASCARA20210204_2(feature, layer) {
             layer.on({
                 mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
                     if (typeof layer.closePopup == 'function') {
                         layer.closePopup();
                     } else {
@@ -199,125 +206,27 @@
             layer.bindPopup(popupContent, {maxHeight: 400});
         }
 
-        function style_ASCARA_Schools_AllOz_20210204_2_0(feature) {
-            switch(String(feature.properties['Ag_Program'])) {
-                default:
-                    return {
-                pane: 'pane_ASCARA_Schools_AllOz_20210204_2',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(209,209,209,1.0)',
-                interactive: true,
-            }
-                    break;
-            }
-        }
-        map.createPane('pane_ASCARA_Schools_AllOz_20210204_2');
-        map.getPane('pane_ASCARA_Schools_AllOz_20210204_2').style.zIndex = 402;
-        map.getPane('pane_ASCARA_Schools_AllOz_20210204_2').style['mix-blend-mode'] = 'normal';
-        var layer_ASCARA_Schools_AllOz_20210204_2 = new L.geoJson(json_ASCARA_Schools_AllOz_20210204_2, {
-            attribution: '',
-            interactive: true,
-            dataVar: 'json_ASCARA_Schools_AllOz_20210204_2',
-            layerName: 'layer_ASCARA_Schools_AllOz_20210204_2',
-            pane: 'pane_ASCARA_Schools_AllOz_20210204_2',
-            onEachFeature: pop_ASCARA_Schools_AllOz_20210204_2,
-            pointToLayer: function (feature, latlng) {
-                var context = {
-                    feature: feature,
-                    variables: {}
-                };
-                return L.circleMarker(latlng, style_ASCARA_Schools_AllOz_20210204_2_0(feature));
-            },
-        });
-        bounds_group.addLayer(layer_ASCARA_Schools_AllOz_20210204_2);
-        map.addLayer(layer_ASCARA_Schools_AllOz_20210204_2);
-        function pop_ASCARA_Schools_AllOz_20210204_3(feature, layer) {
-            layer.on({
-                mouseout: function(e) {
-                    if (typeof layer.closePopup == 'function') {
-                        layer.closePopup();
-                    } else {
-                        layer.eachLayer(function(feature){
-                            feature.closePopup()
-                        });
-                    }
-                },
-                mouseover: highlightFeature,
-            });
-            var popupContent = '<table>\
-                    <tr>\
-                        <th scope="row">ACARA_ID</th>\
-                        <td>' + (feature.properties['ACARA_ID'] !== null ? autolinker.link(feature.properties['ACARA_ID'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <th scope="row">School_Nam</th>\
-                        <td>' + (feature.properties['School_Nam'] !== null ? autolinker.link(feature.properties['School_Nam'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <th scope="row">Suburb</th>\
-                        <td>' + (feature.properties['Suburb'] !== null ? autolinker.link(feature.properties['Suburb'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <th scope="row">State</th>\
-                        <td>' + (feature.properties['State'] !== null ? autolinker.link(feature.properties['State'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <th scope="row">Postcode</th>\
-                        <td>' + (feature.properties['Postcode'] !== null ? autolinker.link(feature.properties['Postcode'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <th scope="row">Type</th>\
-                        <td>' + (feature.properties['Type'] !== null ? autolinker.link(feature.properties['Type'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <th scope="row">Sector</th>\
-                        <td>' + (feature.properties['Sector'] !== null ? autolinker.link(feature.properties['Sector'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <th scope="row">Status</th>\
-                        <td>' + (feature.properties['Status'] !== null ? autolinker.link(feature.properties['Status'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <th scope="row">Geolocatio</th>\
-                        <td>' + (feature.properties['Geolocatio'] !== null ? autolinker.link(feature.properties['Geolocatio'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <th scope="row">Parent_Sch</th>\
-                        <td>' + (feature.properties['Parent_Sch'] !== null ? autolinker.link(feature.properties['Parent_Sch'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <th scope="row">AGE_ID</th>\
-                        <td>' + (feature.properties['AGE_ID'] !== null ? autolinker.link(feature.properties['AGE_ID'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <th scope="row">Latitude</th>\
-                        <td>' + (feature.properties['Latitude'] !== null ? autolinker.link(feature.properties['Latitude'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <th scope="row">Longitude</th>\
-                        <td>' + (feature.properties['Longitude'] !== null ? autolinker.link(feature.properties['Longitude'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <th scope="row">Ag_Program</th>\
-                        <td>' + (feature.properties['Ag_Program'] !== null ? autolinker.link(feature.properties['Ag_Program'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                </table>';
-            layer.bindPopup(popupContent, {maxHeight: 400});
-        }
-
-        function style_ASCARA_Schools_AllOz_20210204_3_0(feature) {
+        function style_SchoolswithAgricultureASCARA20210204_2_0(feature) {
             switch(String(feature.properties['Ag_Program'])) {
                 case 'Yes':
                     return {
-                pane: 'pane_ASCARA_Schools_AllOz_20210204_3',
+                pane: 'pane_SchoolswithAgricultureASCARA20210204_2',
+                radius: 4.4,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(37,201,78,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'NULL':
+                    return {
+                pane: 'pane_SchoolswithAgricultureASCARA20210204_2',
                 radius: 4.0,
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
@@ -327,32 +236,36 @@
                 weight: 1,
                 fill: true,
                 fillOpacity: 1,
-                fillColor: 'rgba(32,162,26,1.0)',
+                fillColor: 'rgba(158,153,154,1.0)',
                 interactive: true,
             }
                     break;
             }
         }
-        map.createPane('pane_ASCARA_Schools_AllOz_20210204_3');
-        map.getPane('pane_ASCARA_Schools_AllOz_20210204_3').style.zIndex = 403;
-        map.getPane('pane_ASCARA_Schools_AllOz_20210204_3').style['mix-blend-mode'] = 'normal';
-        var layer_ASCARA_Schools_AllOz_20210204_3 = new L.geoJson(json_ASCARA_Schools_AllOz_20210204_3, {
+        map.createPane('pane_SchoolswithAgricultureASCARA20210204_2');
+        map.getPane('pane_SchoolswithAgricultureASCARA20210204_2').style.zIndex = 402;
+        map.getPane('pane_SchoolswithAgricultureASCARA20210204_2').style['mix-blend-mode'] = 'normal';
+        var layer_SchoolswithAgricultureASCARA20210204_2 = new L.geoJson(json_SchoolswithAgricultureASCARA20210204_2, {
             attribution: '',
             interactive: true,
-            dataVar: 'json_ASCARA_Schools_AllOz_20210204_3',
-            layerName: 'layer_ASCARA_Schools_AllOz_20210204_3',
-            pane: 'pane_ASCARA_Schools_AllOz_20210204_3',
-            onEachFeature: pop_ASCARA_Schools_AllOz_20210204_3,
+            dataVar: 'json_SchoolswithAgricultureASCARA20210204_2',
+            layerName: 'layer_SchoolswithAgricultureASCARA20210204_2',
+            pane: 'pane_SchoolswithAgricultureASCARA20210204_2',
+            onEachFeature: pop_SchoolswithAgricultureASCARA20210204_2,
             pointToLayer: function (feature, latlng) {
                 var context = {
                     feature: feature,
                     variables: {}
                 };
-                return L.circleMarker(latlng, style_ASCARA_Schools_AllOz_20210204_3_0(feature));
+                return L.circleMarker(latlng, style_SchoolswithAgricultureASCARA20210204_2_0(feature));
             },
         });
-        bounds_group.addLayer(layer_ASCARA_Schools_AllOz_20210204_3);
-        map.addLayer(layer_ASCARA_Schools_AllOz_20210204_3);
+        var cluster_SchoolswithAgricultureASCARA20210204_2 = new L.MarkerClusterGroup({showCoverageOnHover: false,
+            spiderfyDistanceMultiplier: 2});
+        cluster_SchoolswithAgricultureASCARA20210204_2.addLayer(layer_SchoolswithAgricultureASCARA20210204_2);
+
+        bounds_group.addLayer(layer_SchoolswithAgricultureASCARA20210204_2);
+        cluster_SchoolswithAgricultureASCARA20210204_2.addTo(map);
         var osmGeocoder = new L.Control.Geocoder({
             collapsed: true,
             position: 'topleft',
@@ -364,30 +277,37 @@
         document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
         .title += 'Search for a place';
         var baseMaps = {};
-        L.control.layers(baseMaps,{'ASCARA_Schools_AllOz_20210204<br /><table><tr><td style="text-align: center;"><img src="legend/ASCARA_Schools_AllOz_20210204_3_YesAgprogramconfirmed0.png" /></td><td>Yes - Ag program confirmed</td></tr></table>': layer_ASCARA_Schools_AllOz_20210204_3,'ASCARA_Schools_AllOz_20210204<br /><table><tr><td style="text-align: center;"><img src="legend/ASCARA_Schools_AllOz_20210204_2_Allothervalues0.png" /></td><td>All other values</td></tr></table>': layer_ASCARA_Schools_AllOz_20210204_2,'<img src="legend/AAA_Region_Boundaries_1.png" /> AAA_Region_Boundaries': layer_AAA_Region_Boundaries_1,"OSM Standard": layer_OSMStandard_0,}).addTo(map);
+        L.control.layers(baseMaps,{'Schools with Agriculture (ASCARA, 20210204)<br /><table><tr><td style="text-align: center;"><img src="legend/SchoolswithAgricultureASCARA20210204_2_YesconfirmedAgprogram0.png" /></td><td>Yes - confirmed Ag program</td></tr><tr><td style="text-align: center;"><img src="legend/SchoolswithAgricultureASCARA20210204_2_NoAgprogramornotconfirmed1.png" /></td><td>No Ag program, or not confirmed</td></tr></table>': cluster_SchoolswithAgricultureASCARA20210204_2,'<img src="legend/AAARegions_1.png" /> AAA Regions': layer_AAARegions_1,"OSM Standard": layer_OSMStandard_0,},{collapsed:false}).addTo(map);
         setBounds();
         var i = 0;
-        layer_AAA_Region_Boundaries_1.eachLayer(function(layer) {
+        layer_AAARegions_1.eachLayer(function(layer) {
             var context = {
                 feature: layer.feature,
                 variables: {}
             };
-            layer.bindTooltip((layer.feature.properties['RegionName'] !== null?String('<div style="color: #000000; font-size: 10pt; font-family: \'MS Shell Dlg 2\', sans-serif;">' + layer.feature.properties['RegionName']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_AAA_Region_Boundaries_1'});
+            layer.bindTooltip((layer.feature.properties['RegionName'] !== null?String('<div style="color: #000000; font-size: 10pt; font-family: \'MS Shell Dlg 2\', sans-serif;">' + layer.feature.properties['RegionName']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_AAARegions_1'});
             labels.push(layer);
             totalMarkers += 1;
               layer.added = true;
               addLabel(layer, i);
               i++;
         });
-        resetLabels([layer_AAA_Region_Boundaries_1]);
+        map.addControl(new L.Control.Search({
+            layer: cluster_SchoolswithAgricultureASCARA20210204_2,
+            initial: false,
+            hideMarkerOnCollapse: true,
+            propertyName: 'School_Nam'}));
+        document.getElementsByClassName('search-button')[0].className +=
+         ' fa fa-binoculars';
+        resetLabels([layer_AAARegions_1]);
         map.on("zoomend", function(){
-            resetLabels([layer_AAA_Region_Boundaries_1]);
+            resetLabels([layer_AAARegions_1]);
         });
         map.on("layeradd", function(){
-            resetLabels([layer_AAA_Region_Boundaries_1]);
+            resetLabels([layer_AAARegions_1]);
         });
         map.on("layerremove", function(){
-            resetLabels([layer_AAA_Region_Boundaries_1]);
+            resetLabels([layer_AAARegions_1]);
         });
         </script>
     </body>
